@@ -1,10 +1,10 @@
-#Hardware in the Loop Testing
+# Hardware in the Loop Testing
 
 This directory contains files to do hardware in the loop testing of the crazyflie firmware.
 Your firmware can be run on the target platform as if it was normal flight time but the 
 motors wont move and the sensors are fed with simulated data.
 
-##How it works
+## How it works
 
 The crazyflie is flashed with the desired firmware and a general purpose machine is connected
 the STLink for debugging. The general purspose machine then interfaces with the crazyflie
