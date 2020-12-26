@@ -22,10 +22,10 @@ Specifically to read the motor commands you need the addresses of the following 
 (note that the PWM of motors 1,2,3 is controlled with the same timer while motor 4 uses a
 different one):
 
-> p &CONN_M1.tim->CCR2
-> p &CONN_M1.tim->CCR4
-> p &CONN_M1.tim->CCR1
-> p &CONN_M4.tim->CCR4
+> p &CONN_M1.tim->CCR2 \
+> p &CONN_M1.tim->CCR4 \
+> p &CONN_M1.tim->CCR1 \
+> p &CONN_M4.tim->CCR4 \
 
 ### Retrieving the memory addresses of the sensors
 
