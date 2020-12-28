@@ -16,66 +16,37 @@ print("~~~ Starting to read ~~~\n")
 i = 0
 while (1) :
 
-	#read controller actuation signals thrust
-	tn.write(b"mdw 0x2000c5f4\n")
-	tmp1 = tn.read_until(b"0x2000c5f4: ") # read interaction with openocd -- not interesting
+	# motor 1 read
+	tn.write(b"mdw 0x40000038\n")
+	tmp1 = tn.read_until(b"0x40000038: ") # read interaction with openocd -- not interesting
 	tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	num = int(tmp2.decode('ascii').split()[0],16)
-	print("control->thrust = %d " % num, end =",")
+	print("M1 power = %d " % int(tmp2.decode('ascii').split()[0],16), end =",")
 
-	#read controller actuation signals roll
-	tn.write(b"mdw 0x2000c5ec\n")
-	tmp1 = tn.read_until(b"0x2000c5ec: ") # read interaction with openocd -- not interesting
+	# motor 2 read
+	tn.write(b"mdw 0x40000040\n")
+	tmp1 = tn.read_until(b"0x40000040: ") # read interaction with openocd -- not interesting
 	tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	print("control->roll = %d " % int(tmp2.decode('ascii').split()[0],16), end =",")
+	print("M2 power = %d " % int(tmp2.decode('ascii').split()[0],16), end =",")
 
-	#read controller actuation signals pitch
-	tn.write(b"mdw 0x2000c5ee\n")
-	tmp1 = tn.read_until(b"0x2000c5ee: ") # read interaction with openocd -- not interesting
+	# motor 3 read
+	tn.write(b"mdw 0x40000034\n")
+	tmp1 = tn.read_until(b"0x40000034: ") # read interaction with openocd -- not interesting
 	tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	print("control->pitch = %d " % int(tmp2.decode('ascii').split()[0],16), end =",")
+	print("M3 power = %d " % int(tmp2.decode('ascii').split()[0],16), end =",")
 
-	#read controller actuation signals yaw
-	tn.write(b"mdw 0x2000c5f0\n")
-	tmp1 = tn.read_until(b"0x2000c5f0: ") # read interaction with openocd -- not interesting
+	# motor 4 read
+	tn.write(b"mdw 0x40000840\n")
+	tmp1 = tn.read_until(b"0x40000840: ") # read interaction with openocd -- not interesting
 	tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	print("control->yaw = %d " % int(tmp2.decode('ascii').split()[0],16))
+	print("M4 power = %d " % int(tmp2.decode('ascii').split()[0],16))
 
-
-	# # motors read
+	# trying to control motor 1 but seems that the variable gets reset very frequently
+	# tn.write(b"mww 0x40000038 90 \n") 
 	# tn.write(b"mdw 0x40000038\n")
-	# tmp1 = tn.read_until(b"0x40000038: ") # read interaction with openocd -- not interesting
-	# tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	# print("M1 power = %x " % int(tmp2.decode('ascii').split()[0],16), end =",")
-
-	# tn.write(b"mdw 0x40000040\n")
-	# tmp1 = tn.read_until(b"0x40000040: ") # read interaction with openocd -- not interesting
-	# tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	# print("M2 power = %x " % int(tmp2.decode('ascii').split()[0],16), end =",")
-
-	# tn.write(b"mdw 0x40000034\n")
-	# tmp1 = tn.read_until(b"0x40000034: ") # read interaction with openocd -- not interesting
-	# tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	# print("M3 power = %x " % int(tmp2.decode('ascii').split()[0],16), end =",")
-
-	# tn.write(b"mdw 0x40000840\n")
-	# tmp1 = tn.read_until(b"0x40000840: ") # read interaction with openocd -- not interesting
-	# tmp2 = tn.read_until(b"\r\n") # read actual memory read
-	# print("M4 power = %x " % int(tmp2.decode('ascii').split()[0],16))
-
-
-	# tn.write(b"mwb 0x40000020 90 \n") #write to some meomry address
-	# tn.write(b"mdh 0x40000016 32\n")
 	# tn.msg("a") # just for debugging
 
-	# the following two lines are a very dumb way of reading what has been outputted
-	# tn.write(b"\n")
+	time.sleep(0.001)
 
-	time.sleep(0.1)
-	# i=i+1
-
-# tn.write(b"exit\n")
-# print(tn.read_all().decode('ascii'))
 
 tn.close()
 
