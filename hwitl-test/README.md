@@ -29,6 +29,11 @@ different one):
 
 ### Retrieving the memory addresses of the sensors
 
+the memory addresses for the accelRaw and gyroRaw variables are found with a breakpoint 
+in the sensorsTask function - i.e. in gdb insert the command 'b sensors_bmi088_bmp388.c:289' -
+and then ask for 'p &accelRaw'. Otherwise the variable is probably being masked by some other 
+definition that is not being used and contains zero values.
+
 ## Step by step instructions
 
 ## Content of the directory
