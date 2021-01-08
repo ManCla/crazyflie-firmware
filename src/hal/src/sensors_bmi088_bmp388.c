@@ -121,6 +121,7 @@ static volatile uint64_t imuIntTimestamp;
 
 static Axis3i16 gyroRaw;
 static Axis3i16 accelRaw;
+static Axis3i16 accelRaw_hitl;
 NO_DMA_CCM_SAFE_ZERO_INIT static BiasObj gyroBiasRunning;
 static Axis3f gyroBias;
 #if defined(SENSORS_GYRO_BIAS_CALCULATE_STDDEV) && defined (GYRO_BIAS_LIGHT_WEIGHT)
@@ -307,9 +308,9 @@ static void sensorsTask(void *param)
       applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
 
       /* Acelerometer */
-      accScaled.x = accelRaw.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
-      accScaled.y = accelRaw.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
-      accScaled.z = accelRaw.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.x = accelRaw_hitl.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.y = accelRaw_hitl.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.z = accelRaw_hitl.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       sensorsAccAlignToGravity(&accScaled, &sensorData.acc);
       applyAxis3fLpf((lpf2pData*)(&accLpf), &sensorData.acc);
     }
@@ -346,6 +347,10 @@ void sensorsBmi088Bmp388WaitDataReady(void)
 
 static void sensorsDeviceInit(void)
 {
+  accelRaw_hitl.x=0;
+  accelRaw_hitl.y=0;
+  accelRaw_hitl.z=0;
+
   if (isInit)
     return;
 

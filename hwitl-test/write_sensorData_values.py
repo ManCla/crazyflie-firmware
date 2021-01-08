@@ -39,7 +39,7 @@ print(tn.read_until(b"Open On-Chip Debugger\n", timeout=0.5).decode('ascii'))
 print("~~~ Starting to write ~~~\n")
 
 ''' 
-
+the var defined in stabilizer.c
 '''
 '''
 the memory addresses for the accelRaw and gyroRaw variables
@@ -49,45 +49,46 @@ and then ask for 'p &accelRaw'. Otherwise the variable
 is probably being masked by some other definition that is not being used
 '''
 
-value = 0
+value = 1<<32 - 2
+# 1093751826
 
 while (1) :
 
 	#write sensorData.acc.x data
 	## THOSE ARE FLOAT SO YOU NEED TO WRITE IN TWO CONSECUTIVE PAIRS OF BYTES
-	stringa = format("mwh 0x20009638 %d \n" % 56)
+	stringa = format("mww 0x20008fe2 %d \n" % 2)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
-	stringa = format("mwh 0x2000963a %d \n" % 1000000)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# stringa = format("mwh 0x2000963a %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	#write sensorData.acc.y data
-	stringa = format("mww 0x2000963c %d \n" % value)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# #write sensorData.acc.y data
+	# stringa = format("mww 0x2000963c %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	# #write sensorData.acc.z data
-	stringa = format("mww 0x20009640 %d \n" % value)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# # #write sensorData.acc.z data
+	# stringa = format("mww 0x20009640 %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	#write sensorData.gyro.x data
-	stringa = format("mww 0x2000916c %d \n" % value)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# #write sensorData.gyro.x data
+	# stringa = format("mww 0x2000916c %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	#write sensorData.gyro.y data
-	stringa = format("mww 0x20009648 %d \n" % value)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# #write sensorData.gyro.y data
+	# stringa = format("mww 0x20009648 %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	# #write sensorData.gyro.z data
-	stringa = format("mww 0x2000964c %d \n" % value)
-	tn.write(stringa.encode())
-	tn.read_until(b"\r\n") 
+	# # #write sensorData.gyro.z data
+	# stringa = format("mww 0x2000964c %d \n" % value)
+	# tn.write(stringa.encode())
+	# tn.read_until(b"\r\n") 
 
-	time.sleep(0.00001)
+	time.sleep(0.0001)
 
 tn.close()
 
