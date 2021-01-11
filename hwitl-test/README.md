@@ -20,8 +20,10 @@ Need to define the macro HARDWARE\_IN\_THE\_LOOP in file sensors\_bmi088\_bmp388
 This will introduce the dummy variables 
  * *accelRaw_hitl* mocking *accelRaw*.
  * *gyroRaw_hitl* mocking *gyroRaw*.
-The code is also modified so that these variables are used to generate the *sensorData* 
-variable used by the controller.
+
+The code is also modified so that these mocking variables are used to generate the 
+*sensorData* variable used by the controller (in place of the ones carrying the actual 
+measurements).
 
 ### Retrieving the memory addresses of the motor outputs
 
