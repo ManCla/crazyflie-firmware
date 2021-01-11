@@ -25,6 +25,11 @@
  */
 #define DEBUG_MODULE "PWR_DIST"
 
+/* the HARWARE_IN_THE_LOOP macro is used for cutting out the output to 
+the motors so that the crazyflie doesn't fly during hardware in the 
+loop testing */
+#define HARWARE_IN_THE_LOOP
+
 #include "power_distribution.h"
 
 #include <string.h>
@@ -122,11 +127,12 @@ void powerDistribution(const control_t *control)
     if (motorPower.m4 < idleThrust) {
       motorPower.m4 = idleThrust;
     }
-
+#ifndef HARWARE_IN_THE_LOOP
     motorsSetRatio(MOTOR_M1, motorPower.m1);
     motorsSetRatio(MOTOR_M2, motorPower.m2);
     motorsSetRatio(MOTOR_M3, motorPower.m3);
     motorsSetRatio(MOTOR_M4, motorPower.m4);
+#endif /*HARWARE_IN_THE_LOOP*/
   }
 }
 
