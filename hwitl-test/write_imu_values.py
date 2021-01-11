@@ -1,6 +1,3 @@
-#telnet host port << END LOGIN:USER:PASS OTHER TELNET COMMANDS quit END 
-
-
 import telnetlib 
 import time
 
@@ -43,49 +40,52 @@ sensor data in accelRaw and gyroRaw are int16 written in C2
 for this reason they are to be read with mdh 
 (memory dump halfword - halfword is 16bit)
 '''
+
 '''
-the memory addresses for the accelRaw and gyroRaw variables
-are found with a breakpoint in the sensorsTask function 
--- i.e. in gdb insert the command 'b sensors_bmi088_bmp388.c:289' --
-and then ask for 'p &accelRaw'. Otherwise the variable 
-is probably being masked by some other definition that is not being used
+the memory addresses for the accelRaw_hitl and gyroRaw_hitl variables
+are found with gdb using the command 'p &accelRaw_hitl'
+
+
+If the variable is masked by some other definition use a breakpoint
+to make sure you are in the right scope:
+b sensors_bmi088_bmp388.c:300
 '''
 
-value = 0
+value = 999
 
 while (1) :
 
-	#write accelRaw.x data
-	stringa = format("mwh 0x20008fdc %d \n" % value)
+	#write accelRaw_hitl.x data
+	stringa = format("mwh 0x20008e7a %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	#write accelRaw.y data
-	stringa = format("mwh 0x20008fde %d \n" % value)
+	#write accelRaw_hitl.y data
+	stringa = format("mwh 0x20008e7c %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	# #write accelRaw.z data
-	stringa = format("mwh 0x20008fe0 %d \n" % value)
+	# #write accelRaw_hitl.z data
+	stringa = format("mwh 0x20008e7e %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	#write gyroRaw.x data
-	stringa = format("mwh 0x2000916c %d \n" % value)
+	#write gyroRaw_hitl.x data
+	stringa = format("mwh 0x20009012 %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	#write gyroRaw.y data
-	stringa = format("mwh 0x2000916e %d \n" % value)
+	#write gyroRaw_hitl.y data
+	stringa = format("mwh 0x20009014 %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	# #write gyroRaw.z data
-	stringa = format("mwh 0x20009170 %d \n" % value)
+	#write gyroRaw_hitl.z data
+	stringa = format("mwh 0x20009016 %d \n" % value)
 	tn.write(stringa.encode())
 	tn.read_until(b"\r\n") 
 
-	time.sleep(0.00001)
+	time.sleep(0.001)
 
 tn.close()
 
