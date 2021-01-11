@@ -24,7 +24,10 @@
  * sensors_bmi088_bmp388.c: IMU sensor driver for the *88 bosch sensors
  */
 
+
 #define DEBUG_MODULE "IMU"
+// nex macro triggers changes in the firmware for hardware in the loop testing
+#define HARDWARE_IN_THE_LOOP
 
 #include <math.h>
 
@@ -121,7 +124,16 @@ static volatile uint64_t imuIntTimestamp;
 
 static Axis3i16 gyroRaw;
 static Axis3i16 accelRaw;
+/* the next variables conditionally defined are just used for 
+hardware in the loop testing. they are dummy variables to be
+used by the sensor task in place of the ones with the same 
+name but without the siffix _hitl. Those are the ones whose 
+address has to be given to the python script that simulates 
+the flight dynamics. */
+#ifdef HARDWARE_IN_THE_LOOP
 static Axis3i16 accelRaw_hitl;
+static Axis3i16 giroRaw_hitl;
+#endif /* HARDWARE_IN_THE_LOOP */
 NO_DMA_CCM_SAFE_ZERO_INIT static BiasObj gyroBiasRunning;
 static Axis3f gyroBias;
 #if defined(SENSORS_GYRO_BIAS_CALCULATE_STDDEV) && defined (GYRO_BIAS_LIGHT_WEIGHT)
@@ -302,15 +314,31 @@ static void sensorsTask(void *param)
          processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
       }
       /* Gyro */
+#ifndef HARDWARE_IN_THE_LOOP
       sensorData.gyro.x =  (gyroRaw.x - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.y =  (gyroRaw.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+#endif /* HARDWARE_IN_THE_LOOP */
+#ifndef HARDWARE_IN_THE_LOOP
+      sensorData.gyro.x =  (gyroRaw_hitl.x ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.y =  (gyroRaw_hitl.y ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.z =  (gyroRaw_hitl.z ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+#endif /* HARDWARE_IN_THE_LOOP */
       applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
 
       /* Acelerometer */
+// normal use code
+#ifndef HARDWARE_IN_THE_LOOP
+      accScaled.x = accelRaw.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.y = accelRaw.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.z = accelRaw.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+#endif /* HARDWARE_IN_THE_LOOP */
+//hardware in the loop testing code
+#ifdef HARDWARE_IN_THE_LOOP
       accScaled.x = accelRaw_hitl.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.y = accelRaw_hitl.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.z = accelRaw_hitl.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+#endif /* HARDWARE_IN_THE_LOOP */
       sensorsAccAlignToGravity(&accScaled, &sensorData.acc);
       applyAxis3fLpf((lpf2pData*)(&accLpf), &sensorData.acc);
     }
@@ -347,6 +375,10 @@ void sensorsBmi088Bmp388WaitDataReady(void)
 
 static void sensorsDeviceInit(void)
 {
+  /* this initialization is needed to prevent the compiler to optimize out the dummy variable
+  /* the _hitl variables are used for hardware in the lool testing
+       
+  */
   accelRaw_hitl.x=0;
   accelRaw_hitl.y=0;
   accelRaw_hitl.z=0;

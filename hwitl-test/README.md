@@ -15,6 +15,14 @@ When communicating with the crazyflie through openOCD high-level symbols of the 
 not availalbe (as they would be for example with GDB) and instead the memory registers of the
 crazyflie platform have to be direactly accessed.
 
+### Changes in the firmware
+Need to define the macro HARDWARE\_IN\_THE\_LOOP in file sensors\_bmi088\_bmp388.c
+This will introduce the dummy variables 
+ * *accelRaw_hitl* mocking *accelRaw*.
+ * *gyroRaw_hitl* mocking *gyroRaw*.
+The code is also modified so that these variables are used to generate the *sensorData* 
+variable used by the controller.
+
 ### Retrieving the memory addresses of the motor outputs
 
 When running GDB the content of variables can be polled with the command *p*.
