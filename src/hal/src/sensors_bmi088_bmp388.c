@@ -132,7 +132,7 @@ address has to be given to the python script that simulates
 the flight dynamics. */
 #ifdef HARDWARE_IN_THE_LOOP
 static Axis3i16 accelRaw_hitl;
-static Axis3i16 giroRaw_hitl;
+static Axis3i16 gyroRaw_hitl;
 #endif /* HARDWARE_IN_THE_LOOP */
 NO_DMA_CCM_SAFE_ZERO_INIT static BiasObj gyroBiasRunning;
 static Axis3f gyroBias;
@@ -319,7 +319,7 @@ static void sensorsTask(void *param)
       sensorData.gyro.y =  (gyroRaw.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_BMI088_DEG_PER_LSB_CFG;
 #endif /* HARDWARE_IN_THE_LOOP */
-#ifndef HARDWARE_IN_THE_LOOP
+#ifdef HARDWARE_IN_THE_LOOP
       sensorData.gyro.x =  (gyroRaw_hitl.x ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.y =  (gyroRaw_hitl.y ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.z =  (gyroRaw_hitl.z ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
@@ -327,13 +327,11 @@ static void sensorsTask(void *param)
       applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
 
       /* Acelerometer */
-// normal use code
 #ifndef HARDWARE_IN_THE_LOOP
       accScaled.x = accelRaw.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.y = accelRaw.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.z = accelRaw.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
 #endif /* HARDWARE_IN_THE_LOOP */
-//hardware in the loop testing code
 #ifdef HARDWARE_IN_THE_LOOP
       accScaled.x = accelRaw_hitl.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.y = accelRaw_hitl.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
@@ -376,12 +374,14 @@ void sensorsBmi088Bmp388WaitDataReady(void)
 static void sensorsDeviceInit(void)
 {
   /* this initialization is needed to prevent the compiler to optimize out the dummy variable
-  /* the _hitl variables are used for hardware in the lool testing
-       
+     the _hitl variables are used for hardware in the lool testing
   */
   accelRaw_hitl.x=0;
   accelRaw_hitl.y=0;
   accelRaw_hitl.z=0;
+  gyroRaw_hitl.x=0;
+  gyroRaw_hitl.y=0;
+  gyroRaw_hitl.z=0;
 
   if (isInit)
     return;
