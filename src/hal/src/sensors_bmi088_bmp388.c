@@ -26,7 +26,7 @@
 
 
 #define DEBUG_MODULE "IMU"
-// nex macro triggers changes in the firmware for hardware in the loop testing
+// next macro triggers changes in the firmware for hardware in the loop testing
 #define HARDWARE_IN_THE_LOOP
 
 #include <math.h>
@@ -320,9 +320,9 @@ static void sensorsTask(void *param)
       sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_BMI088_DEG_PER_LSB_CFG;
 #endif /* HARDWARE_IN_THE_LOOP */
 #ifdef HARDWARE_IN_THE_LOOP
-      sensorData.gyro.x =  (gyroRaw_hitl.x ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
-      sensorData.gyro.y =  (gyroRaw_hitl.y ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
-      sensorData.gyro.z =  (gyroRaw_hitl.z ) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.x =  (gyroRaw_hitl.x - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.y =  (gyroRaw_hitl.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.z =  (gyroRaw_hitl.z - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
 #endif /* HARDWARE_IN_THE_LOOP */
       applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
 
@@ -376,12 +376,14 @@ static void sensorsDeviceInit(void)
   /* this initialization is needed to prevent the compiler to optimize out the dummy variable
      the _hitl variables are used for hardware in the lool testing
   */
+#ifdef HARDWARE_IN_THE_LOOP
   accelRaw_hitl.x=0;
   accelRaw_hitl.y=0;
   accelRaw_hitl.z=0;
   gyroRaw_hitl.x=0;
   gyroRaw_hitl.y=0;
   gyroRaw_hitl.z=0;
+#endif /* HARDWARE_IN_THE_LOOP */
 
   if (isInit)
     return;
