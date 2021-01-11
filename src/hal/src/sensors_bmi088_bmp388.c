@@ -314,28 +314,27 @@ static void sensorsTask(void *param)
          processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
       }
       /* Gyro */
-#ifndef HARDWARE_IN_THE_LOOP
-      sensorData.gyro.x =  (gyroRaw.x - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
-      sensorData.gyro.y =  (gyroRaw.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
-      sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_BMI088_DEG_PER_LSB_CFG;
-#endif /* HARDWARE_IN_THE_LOOP */
 #ifdef HARDWARE_IN_THE_LOOP
       sensorData.gyro.x =  (gyroRaw_hitl.x - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.y =  (gyroRaw_hitl.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
       sensorData.gyro.z =  (gyroRaw_hitl.z - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+#else //normal firmware
+      sensorData.gyro.x =  (gyroRaw.x - gyroBias.x) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.y =  (gyroRaw.y - gyroBias.y) * SENSORS_BMI088_DEG_PER_LSB_CFG;
+      sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_BMI088_DEG_PER_LSB_CFG;
 #endif /* HARDWARE_IN_THE_LOOP */
+
       applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
 
       /* Acelerometer */
-#ifndef HARDWARE_IN_THE_LOOP
-      accScaled.x = accelRaw.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
-      accScaled.y = accelRaw.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
-      accScaled.z = accelRaw.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
-#endif /* HARDWARE_IN_THE_LOOP */
 #ifdef HARDWARE_IN_THE_LOOP
       accScaled.x = accelRaw_hitl.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.y = accelRaw_hitl.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
       accScaled.z = accelRaw_hitl.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+#else //normal firmware
+      accScaled.x = accelRaw.x * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.y = accelRaw.y * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
+      accScaled.z = accelRaw.z * SENSORS_BMI088_G_PER_LSB_CFG / accScale;
 #endif /* HARDWARE_IN_THE_LOOP */
       sensorsAccAlignToGravity(&accScaled, &sensorData.acc);
       applyAxis3fLpf((lpf2pData*)(&accLpf), &sensorData.acc);
