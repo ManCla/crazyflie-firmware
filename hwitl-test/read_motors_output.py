@@ -11,7 +11,8 @@ print(tn.read_until(b"Open On-Chip Debugger\n", timeout=0.5).decode('ascii'))
 print("~~~ Starting to read ~~~\n")
 
 '''
-this script reads 
+this script reads outputs to the motors. It intercepts the struct motorPower 
+with fields {m1,m2,m3,m4} from file power_distribution_stock.c .
 '''
 
 while (1) :

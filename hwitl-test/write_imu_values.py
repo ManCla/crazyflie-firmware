@@ -51,7 +51,7 @@ to make sure you are in the right scope:
 b sensors_bmi088_bmp388.c:300
 '''
 
-value = 999
+value = translationtoC2(0)
 
 while (1) :
 
