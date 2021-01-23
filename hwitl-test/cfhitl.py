@@ -27,6 +27,11 @@ class cfHITL(telnetlib.Telnet):
         self._addr_book = dict()                  # init dictionary memory addresses
 
     """
+    Function to terminate telnet connection
+    """
+    def close(self):
+        super().close()
+    """
     Function to add the memory addresses of the variables in the firmware
     """        
     def add_mem_addr(self, identifier: str, addr: str):
@@ -45,9 +50,13 @@ class cfHITL(telnetlib.Telnet):
 
     """
     Function to write to a given memory address
+    half word (2 bytes) is written unless the optional argument is given
+    to write to a full work (4 bytes) 
     """
-    def write_mem_addr(self, addr: str, message: str):
-        stringa = "mwh " + addr + ' ' + message + " \n" # build openocd command
+    def write_mem_addr(self, addr: str, message: str, write_full_word=False):
+        cmd = "mww " if write_full_word else "mwh "
+        stringa = cmd + addr + ' ' + message + " \n" # build openocd command
+        print(stringa)
         super().write(stringa.encode())                 # send command
         super().read_until(b"\r\n")                     # no echo output to handle
 
@@ -60,6 +69,13 @@ class cfHITL(telnetlib.Telnet):
         m3 = self.read_mem_addr(self._addr_book['motorPower_m3'])
         m4 = self.read_mem_addr(self._addr_book['motorPower_m4'])
         return [m1, m2, m3, m4]
+
+    """
+    Function to write pressure measurements
+    TODO: convert to float
+    """
+    def write_pressure(self, pressure:float):
+        self.write_mem_addr(self._addr_book['data_pressure_hitl'], str(pressure),   write_full_word=True)
 
     """
     Function that writes IMU values to sensordata variables
