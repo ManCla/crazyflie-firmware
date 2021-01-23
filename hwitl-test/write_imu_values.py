@@ -85,7 +85,7 @@ b sensors_bmi088_bmp388.c:300
 #value = 10
 #value = int(value*65536/(2*24))
 
-value= 123
+value= 0.001
 
 
 #write accelRaw_hitl.x data
@@ -105,7 +105,6 @@ tn.read_until(b"\r\n")
 
 #write gyroRaw_hitl.x data
 stringa = format("mwh 0x20009012 %d \n" % formatGyro(value))
-print(stringa)
 tn.write(stringa.encode())
 tn.read_until(b"\r\n") 
 
