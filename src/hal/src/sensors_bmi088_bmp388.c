@@ -133,6 +133,7 @@ the flight dynamics. */
 #ifdef HARDWARE_IN_THE_LOOP
 static Axis3i16 accelRaw_hitl;
 static Axis3i16 gyroRaw_hitl;
+float  data_pressure_hitl; //defined here to avoid compile time warning for using uninitialized var 
 #endif /* HARDWARE_IN_THE_LOOP */
 NO_DMA_CCM_SAFE_ZERO_INIT static BiasObj gyroBiasRunning;
 static Axis3f gyroBias;
@@ -350,7 +351,11 @@ static void sensorsTask(void *param)
         baro_t* baro388 = &sensorData.baro;
         /* Temperature and Pressure data are read and stored in the bmp3_data instance */
         bmp3_get_sensor_data(sensor_comp, &data, &bmp388Dev);
+#ifdef HARDWARE_IN_THE_LOOP
+        sensorsScaleBaro(baro388, data_pressure_hitl, data.temperature);
+#else
         sensorsScaleBaro(baro388, data.pressure, data.temperature);
+#endif /* HARDWARE_IN_THE_LOOP */
         baroMeasDelay = baroMeasDelayMin;
       }
     }
