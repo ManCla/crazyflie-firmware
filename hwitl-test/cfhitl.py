@@ -36,7 +36,7 @@ class cfHITL(telnetlib.Telnet):
     Function to read from a given memory address
     """
     def read_mem_addr(self, addr: str):
-        cmd = format("mdw %s \n" % addr)   # build command openocd command
+        cmd = format("mdw %s \n" % addr)   # build openocd command
         super().write(cmd.encode())        # send command to openocd
         reply = format("%s: " % addr)      # expected reply from openocd
         super().read_until(reply.encode()) # flush openocd echo
@@ -44,9 +44,12 @@ class cfHITL(telnetlib.Telnet):
         return int(read.decode('ascii').split()[0],16) # extract and convert to int
 
     """
+    Function to write to a given memory address
     """
-    def write_mem_addr(self, addr: str):
-        pass
+    def write_mem_addr(self, addr: str, message: str):
+        stringa = "mwh " + addr + message + " \n" # build openocd command
+        super().write(stringa.encode())           # send command
+        super().read_until(b"\r\n")               # no echo output to handle
 
     """
     Function that reads all of the motor values and returns them
