@@ -27,3 +27,5 @@ docs/.jekyll-cache
 
 # for mac
 *.DS_Store
+# folder with old temporary scripts
+hwitl-test.old-scripts
