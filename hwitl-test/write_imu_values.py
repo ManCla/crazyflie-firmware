@@ -30,10 +30,6 @@ accelRaw_hitl variable of the crazyflie firmware.
 TODO: the accelScale is not yet accounted for (since it is defined on startup)
 TODO : check for overflow after scaling
 '''
-#def formatAccel(num) : 
-#    if num<0 :
-#        num = pow(2,17) - pow(2,15) + num # C2 representation ?????
-#    return int(num*65536/(2*24))
 def formatAccel(num) : 
     num = num * 65536/(2*24)
     if num<0 :
