@@ -6,6 +6,7 @@ if __name__ == "__main__":
     
     # convention is to have a dictionary with field names that are the same as the 
     # names of the variables in the firmware 
+    # TODO: retrieve automatically the addresses form map file
 
     # motors
     cf.add_mem_addr("motorPower_m1", "0x2000cde4")
@@ -20,9 +21,11 @@ if __name__ == "__main__":
     cf.add_mem_addr("gyroRaw_hitl_x", "0x20009012")
     cf.add_mem_addr("gyroRaw_hitl_y", "0x20009014")
     cf.add_mem_addr("gyroRaw_hitl_z", "0x20009016")
+    #barometer
+    cf.add_mem_addr("data_pressure_hitl", "0x2000efa4")
 
-    while (1) :
-        #tmp = cf.motors()
-        #print(tmp)
-        cf.write_mem_addr(cf._addr_book['gyroRaw_hitl_z'],'0')
-        time.sleep(0.1)
+    #print(cf.motors)
+    cf.write_imu(1, 2, 3, 4, 5, 6)
+    cf.write_pressure(37*pow(2,25))
+    cf.close()
+    time.sleep(0.1)
