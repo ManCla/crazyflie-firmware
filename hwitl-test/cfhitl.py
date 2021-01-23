@@ -62,13 +62,43 @@ class cfHITL(telnetlib.Telnet):
         return [m1, m2, m3, m4]
 
     """
+    Function that writes IMU values to sensordata variables
+    values are scaled to Least Significant Bit unit of measure and 
+    converted to TwosComplement with auxiliary finctions
     """
-    def write_imu(self, identifier: str):
-        pass
-
-    """
+    def write_imu(self, ax: float, ay: float, az: float, gx: float, gy: float, gz: float):
+        self.write_mem_addr(self._addr_book['accelRaw_hitl_x'], str(self.accelToLSB(ax)))
+        self.write_mem_addr(self._addr_book['accelRaw_hitl_y'], str(self.accelToLSB(ay)))
+        self.write_mem_addr(self._addr_book['accelRaw_hitl_z'], str(self.accelToLSB(az)))
+        self.write_mem_addr(self._addr_book['gyroRaw_hitl_x'], str(self.gyroToLSB(gx)))
+        self.write_mem_addr(self._addr_book['gyroRaw_hitl_y'], str(self.gyroToLSB(gy)))
+        self.write_mem_addr(self._addr_book['gyroRaw_hitl_z'], str(self.gyroToLSB(gz)))
     
-    def fname(self) -> ReturnClass:
-        pass
-    """
+    '''
+    this function translates an acceleration value to the format of the
+    accelRaw_hitl variable of the crazyflie firmware. 
+
+    TODO: the accelScale is not yet accounted for (since it is defined on startup)
+    TODO : check for overflow after scaling
+    '''
+    def accelToLSB(self, num) : 
+        num = num * 65536/(2*24)   # scale to LSB
+        if num<0 :
+            num = pow(2,17) + num  # C2
+        return int(num)
+
+    '''
+    this function formats an gyro value to the format of the
+    gyroRaw_hitl variable of the crazyflie firmware. 
+
+    TODO : the gyroBias is not yet accounted for (since it is defined on startup)
+    TODO : check for overflow after scaling
+    '''
+    def gyroToLSB(self, num) : 
+        num = num * 65536/(2*2000)  # scale to LSB
+        if num<0 :
+            num = (pow(2,17) + num) # C2 
+        return int(num)
+
+
 
